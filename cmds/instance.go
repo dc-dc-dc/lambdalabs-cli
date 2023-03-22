@@ -64,7 +64,9 @@ func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
 	quantity := fs.Int("q", 1, "number of instances to spin up")
 	name := fs.String("name", "", "the name of the instance")
 
-	fs.Parse(args)
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
 	req := api.InstanceCreateAPIRequest{
 		RegionName:       *region,
 		InstanceTypeName: *instanceType,
