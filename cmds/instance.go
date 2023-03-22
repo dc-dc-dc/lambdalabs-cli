@@ -72,13 +72,11 @@ func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
 		InstanceTypeName: *instanceType,
 		SSHKeyNames:      strings.Split(*sshKeys, ","),
 		Quantity:         *quantity,
+		Name:             *name,
 	}
 	if *fileSystemNames != "" {
 		req.FileSystemNames = strings.Split(*fileSystemNames, ",")
 
-	}
-	if *name != "" {
-		req.Name = name
 	}
 	httpRes, err := t.apiHandler.Post(context.TODO(), "/instance-operations/launch", req)
 	if err != nil {
