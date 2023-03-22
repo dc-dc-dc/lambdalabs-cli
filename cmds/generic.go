@@ -21,11 +21,13 @@ func NewHandler(version string, apiHandler *api.APIHandler) *Handler {
 	return &Handler{
 		Version: version,
 		AliasMap: map[string]string{
-			"i": "instance",
+			"i":  "instance",
+			"fs": "file-system",
 		},
 		Cmds: map[string]CommandHandler{
-			"instance": NewInstanceCommand(apiHandler),
-			"ssh":      NewSSHKeyCommand(apiHandler),
+			"instance":    NewInstanceCommand(apiHandler),
+			"ssh":         NewSSHKeyCommand(apiHandler),
+			"file-system": NewFileSystemCommand(apiHandler),
 		},
 	}
 }
