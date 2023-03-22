@@ -45,6 +45,7 @@ func (t *InstanceCommand) handleInstanceTypeListCommand(args []string) error {
 	if err != nil {
 		return err
 	}
+	defer httpRes.Body.Close()
 	rawData, err := io.ReadAll(httpRes.Body)
 	if err != nil {
 		return err
@@ -82,6 +83,7 @@ func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
 	if err != nil {
 		return err
 	}
+	defer httpRes.Body.Close()
 	rawData, err := io.ReadAll(httpRes.Body)
 	if err != nil {
 		return err
@@ -96,6 +98,7 @@ func (t *InstanceCommand) handleInstanceDeleteCommand(args []string) error {
 	if err != nil {
 		return err
 	}
+	defer httpRes.Body.Close()
 	rawData, err := io.ReadAll(httpRes.Body)
 	if err != nil {
 		return err
@@ -113,6 +116,7 @@ func (t *InstanceCommand) handleInstanceGetCommand(args []string) error {
 	if err != nil {
 		return err
 	}
+	defer httpRes.Body.Close()
 	rawData, err := io.ReadAll(httpRes.Body)
 	if err != nil {
 		return err
@@ -126,6 +130,7 @@ func (t *InstanceCommand) handleInstanceListCommand(args []string) error {
 	if err != nil {
 		return err
 	}
+	defer httpRes.Body.Close()
 	rawData, err := io.ReadAll(httpRes.Body)
 	if err != nil {
 		return err

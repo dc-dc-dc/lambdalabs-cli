@@ -36,6 +36,7 @@ func (s *SSHKeyCommand) listSSHKeys(args []string) error {
 	if err != nil {
 		return err
 	}
+	defer httpRes.Body.Close()
 	raw, err := io.ReadAll(httpRes.Body)
 	if err != nil {
 		return err
@@ -59,6 +60,7 @@ func (s *SSHKeyCommand) addSSHKey(args []string) error {
 	if err != nil {
 		return err
 	}
+	defer httpRes.Body.Close()
 	raw, err := io.ReadAll(httpRes.Body)
 	if err != nil {
 		return err
