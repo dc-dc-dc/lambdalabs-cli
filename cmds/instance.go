@@ -2,9 +2,10 @@ package cmds
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/dc-dc-dc/lambda-cli/api"
@@ -21,8 +22,12 @@ func NewInstanceCommand(apiHandler *api.APIHandler) CommandHandler {
 }
 
 func (t *InstanceCommand) HandleCommand(cmd string, args []string) error {
-	fmt.Printf("got cmd %s, args - %v\n", cmd, args)
+	if os.Getenv("DEBUG") == "1" {
+		fmt.Printf("got cmd %s, args - %v\n", cmd, args)
+	}
 	switch cmd {
+	case "types":
+		return t.handleInstanceTypeListCommand(args)
 	case "create":
 		return t.handleInstanceCreateCommand(args)
 	case "delete":
@@ -35,42 +40,66 @@ func (t *InstanceCommand) HandleCommand(cmd string, args []string) error {
 	return fmt.Errorf("unknown cmd %s", cmd)
 }
 
+func (t *InstanceCommand) handleInstanceTypeListCommand(args []string) error {
+	httpRes, err := t.apiHandler.Get(context.TODO(), "/instance-types")
+	if err != nil {
+		return err
+	}
+	rawData, err := io.ReadAll(httpRes.Body)
+	if err != nil {
+		return err
+	}
+	prettyJson(rawData)
+	return nil
+}
+
 func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
 	// region, instance_type_name, ssh_key_names - required
 	// quantity, name, file_system_names
 	region := flag.String("region", "", "the region of the instance")
-	instanceType := flag.String("instance-type", "", "the instance type")
+	instanceType := flag.String("type", "", "the instance type")
 	sshKeys := flag.String("ssh-keys", "", "comma seperated name of ssh-keys to install")
 	fileSystems := flag.String("file-systems", "", "comma seperated names of file systems to add")
 	quantity := flag.Int("q", 1, "number of instances to spin up")
 	name := flag.String("name", "", "the name of the instance")
+	if flag.Parsed() {
+		return fmt.Errorf("flags have already been parsed")
+	}
 	flag.Parse()
-	httpRes, err := t.apiHandler.Post(context.TODO(), "/instance-operations/launch", api.InstanceCreateAPIRequest{
+	req := api.InstanceCreateAPIRequest{
 		RegionName:       *region,
 		InstanceTypeName: *instanceType,
 		SSHKeyNames:      strings.Split(*sshKeys, ","),
 		FileSystemNames:  strings.Split(*fileSystems, ","),
-		Name:             name,
 		Quantity:         *quantity,
-	})
+	}
+	fmt.Printf("%+v\n", req)
+	if *name != "" {
+		req.Name = name
+	}
+	httpRes, err := t.apiHandler.Post(context.TODO(), "/instance-operations/launch", req)
 	if err != nil {
 		return err
 	}
-	defer httpRes.Body.Close()
-	data := &api.InstanceCreateAPIResponse{}
-	if err := json.NewDecoder(httpRes.Body).Decode(&data); err != nil {
+	rawData, err := io.ReadAll(httpRes.Body)
+	if err != nil {
 		return err
 	}
-	fmt.Printf("%s\n", strings.Join(data.Data.InstanceIds, ", "))
+	prettyJson(rawData)
 	return nil
 }
 
 func (t *InstanceCommand) handleInstanceDeleteCommand(args []string) error {
 	// TODO: validate the ids
-	if _, err := t.apiHandler.Post(context.TODO(), "/instance-operations/terminate", api.InstanceDeleteApiRequest{InstanceIds: args}); err != nil {
+	httpRes, err := t.apiHandler.Post(context.TODO(), "/instance-operations/terminate", api.InstanceDeleteApiRequest{InstanceIds: args})
+	if err != nil {
 		return err
 	}
-
+	rawData, err := io.ReadAll(httpRes.Body)
+	if err != nil {
+		return err
+	}
+	prettyJson(rawData)
 	return nil
 }
 
@@ -83,12 +112,11 @@ func (t *InstanceCommand) handleInstanceGetCommand(args []string) error {
 	if err != nil {
 		return err
 	}
-	defer httpRes.Body.Close()
-	data := &api.InstanceGetAPIResponse{}
-	if err := json.NewDecoder(httpRes.Body).Decode(&data); err != nil {
+	rawData, err := io.ReadAll(httpRes.Body)
+	if err != nil {
 		return err
 	}
-	fmt.Printf("%+v", data.Data)
+	prettyJson(rawData)
 	return nil
 }
 
@@ -97,22 +125,27 @@ func (t *InstanceCommand) handleInstanceListCommand(args []string) error {
 	if err != nil {
 		return err
 	}
-	defer httpRes.Body.Close()
-	data := &api.ListInstanceResponse{}
-	if err := json.NewDecoder(httpRes.Body).Decode(&data); err != nil {
+	rawData, err := io.ReadAll(httpRes.Body)
+	if err != nil {
 		return err
 	}
+	prettyJson(rawData)
+	// defer httpRes.Body.Close()
+	// data := &api.ListInstanceResponse{}
+	// if err := json.NewDecoder(httpRes.Body).Decode(&data); err != nil {
+	// 	return err
+	// }
 
-	if len(data.Data) == 0 {
-		fmt.Println("no instances running")
-	}
+	// if len(data.Data) == 0 {
+	// 	fmt.Println("no instances running")
+	// }
 
-	for _, s := range data.Data {
-		fmt.Printf("%+v\n", s)
-	}
+	// for _, s := range data.Data {
+	// 	fmt.Printf("%+v\n", s)
+	// }
 	return nil
 }
 
 func (t *InstanceCommand) GetAvailableCommands() []string {
-	return []string{"create", "delete", "list", "get"}
+	return []string{"types", "create", "delete", "list", "get"}
 }

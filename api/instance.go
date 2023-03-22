@@ -36,7 +36,7 @@ type InstanceCreateAPIRequest struct {
 	SSHKeyNames      []string `json:"ssh_key_names"`
 	FileSystemNames  []string `json:"file_system_names,omitempty"`
 	Quantity         int      `json:"Quantity"`
-	Name             *string  `json:"name"`
+	Name             *string  `json:"name,omitempty"`
 }
 
 type InstanceCreateAPIResponse struct {
