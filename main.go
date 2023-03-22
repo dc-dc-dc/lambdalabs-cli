@@ -21,7 +21,7 @@ func main() {
 	h := cmds.NewHandler(version, apiHandler)
 	if len(os.Args) == 1 {
 		// print help
-		h.PrintHelp("", h.GetAvailableCommands())
+		h.PrintHelp("sub", h.GetAvailableCommands())
 		os.Exit(1)
 		return
 	}

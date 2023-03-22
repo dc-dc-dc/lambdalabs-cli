@@ -25,6 +25,7 @@ func NewHandler(version string, apiHandler *api.APIHandler) *Handler {
 		},
 		Cmds: map[string]CommandHandler{
 			"instance": NewInstanceCommand(apiHandler),
+			"ssh":      NewSSHKeyCommand(apiHandler),
 		},
 	}
 }
@@ -35,13 +36,13 @@ func (h *Handler) HandleCommand(cmd string, args []string) error {
 	}
 
 	if cmd == "help" {
-		h.PrintHelp("", h.GetAvailableCommands())
+		h.PrintHelp("sub", h.GetAvailableCommands())
 		return nil
 	}
 
 	if handler, ok := h.Cmds[cmd]; ok {
 		if len(args) == 0 {
-			h.PrintHelp("", handler.GetAvailableCommands())
+			h.PrintHelp("sub", handler.GetAvailableCommands())
 			return nil // or return error ?
 		}
 		_cmd := args[0]
