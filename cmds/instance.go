@@ -56,24 +56,25 @@ func (t *InstanceCommand) handleInstanceTypeListCommand(args []string) error {
 func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
 	// region, instance_type_name, ssh_key_names - required
 	// quantity, name, file_system_names
-	region := flag.String("region", "", "the region of the instance")
-	instanceType := flag.String("type", "", "the instance type")
-	sshKeys := flag.String("ssh-keys", "", "comma seperated name of ssh-keys to install")
-	fileSystems := flag.String("file-systems", "", "comma seperated names of file systems to add")
-	quantity := flag.Int("q", 1, "number of instances to spin up")
-	name := flag.String("name", "", "the name of the instance")
-	if flag.Parsed() {
-		return fmt.Errorf("flags have already been parsed")
-	}
-	flag.Parse()
+	fs := flag.NewFlagSet("create", flag.ContinueOnError)
+	region := fs.String("region", "", "the region of the instance")
+	instanceType := fs.String("type", "", "the instance type")
+	sshKeys := fs.String("ssh-keys", "", "comma seperated name of ssh-keys to install")
+	fileSystemNames := fs.String("file-systems", "", "comma seperated names of file systems to add")
+	quantity := fs.Int("q", 1, "number of instances to spin up")
+	name := fs.String("name", "", "the name of the instance")
+
+	fs.Parse(args)
 	req := api.InstanceCreateAPIRequest{
 		RegionName:       *region,
 		InstanceTypeName: *instanceType,
 		SSHKeyNames:      strings.Split(*sshKeys, ","),
-		FileSystemNames:  strings.Split(*fileSystems, ","),
 		Quantity:         *quantity,
 	}
-	fmt.Printf("%+v\n", req)
+	if *fileSystemNames != "" {
+		req.FileSystemNames = strings.Split(*fileSystemNames, ",")
+
+	}
 	if *name != "" {
 		req.Name = name
 	}
