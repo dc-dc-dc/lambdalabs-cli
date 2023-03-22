@@ -13,19 +13,6 @@ type APIHandler struct {
 	key string
 }
 
-type APIError struct {
-	APIErr struct {
-		Code       string `json:"code"`
-		Message    string `json:"message"`
-		Suggestion string `json:"suggestion"`
-	} `json:"error"`
-	FieldErrors map[string]interface{} `json:"field_errors"`
-}
-
-func (e *APIError) Error() string {
-	return fmt.Sprintf("API Error got code: %s, message: %s, suggestion: %s", e.APIErr.Code, e.APIErr.Message, e.APIErr.Suggestion)
-}
-
 func NewAPIHandler(key string) *APIHandler {
 	return &APIHandler{key: key}
 }

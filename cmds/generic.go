@@ -54,7 +54,15 @@ func (h *Handler) HandleCommand(cmd string, args []string) error {
 			return nil // or error?
 		}
 
-		return handler.HandleCommand(_cmd, _args)
+		err := handler.HandleCommand(_cmd, _args)
+		if t, ok := err.(*api.APIError); ok {
+			// if the conversion is fine print the json directly
+			if raw, err := t.Raw(); err == nil {
+				prettyJson(raw)
+				return nil
+			}
+		}
+		return err
 	}
 
 	return fmt.Errorf("unknown command %s", cmd)
