@@ -1,25 +1,35 @@
 package api
 
+type Region struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+type InstanceType struct {
+	Name             string            `json:"name"`
+	Description      string            `json:"description"`
+	PriceCentsHourly int               `json:"price_cents_per_hour"`
+	Specs            InstanceTypeSpecs `json:"specs"`
+}
+
+type InstanceTypeSpecs struct {
+	VCPUS     int `json:"vcpus"`
+	MemoryGB  int `json:"memory_gib"`
+	StorageGB int `json:"storage_gib"`
+}
+
 type Instance struct {
-	Id              string   `json:"id"`
-	Name            string   `json:"name"`
-	IP              string   `json:"ip"`
-	Status          string   `json:"status"`
-	SshKeyNames     []string `json:"ssh_key_names"`
-	FileSystemNames []string `json:"file_system_names"`
-	Region          struct {
-		Name        string `json:"name"`
-		Description string `json:"description"`
-	} `json:"region"`
-	InstanceType struct {
-		Name             string      `json:"name"`
-		Description      string      `json:"description"`
-		PriceCentsHourly int         `json:"price_cents_per_hour"`
-		Specs            interface{} `json:"specs"`
-	} `json:"instance_type"`
-	Hostname     string `json:"hostname"`
-	JupyterToken string `json:"jupyter_token"`
-	JupyterUrl   string `json:"jupyter_url"`
+	Id              string       `json:"id"`
+	Name            string       `json:"name"`
+	IP              string       `json:"ip"`
+	Status          string       `json:"status"`
+	SshKeyNames     []string     `json:"ssh_key_names"`
+	FileSystemNames []string     `json:"file_system_names"`
+	Region          Region       `json:"region"`
+	InstanceType    InstanceType `json:"instance_type"`
+	Hostname        string       `json:"hostname"`
+	JupyterToken    string       `json:"jupyter_token"`
+	JupyterUrl      string       `json:"jupyter_url"`
 }
 
 type ListInstanceResponse struct {
