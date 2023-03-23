@@ -7,7 +7,7 @@ name: Upload release
 
 jobs:
   build:
-    permissions: write
+    permissions: write-all
     name: Upload Release
     runs-on: ubuntu-latest
     steps:
