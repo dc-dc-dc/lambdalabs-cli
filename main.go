@@ -49,7 +49,6 @@ func GetDefaults() (string, string) {
 	if err == nil {
 		f, err := os.Open(fmt.Sprintf("%s/.lambda", home))
 		if err == nil {
-			fmt.Println("reading from file")
 			defer f.Close()
 			raw, err := io.ReadAll(f)
 			if err == nil {
