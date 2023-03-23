@@ -79,6 +79,11 @@ func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
 		req.FileSystemNames = strings.Split(*fileSystemNames, ",")
 
 	}
+	// use default region if not provided
+	if req.RegionName == "" {
+		req.RegionName = t.apiHandler.GetDefaultRegion()
+	}
+
 	httpRes, err := t.apiHandler.Post(context.TODO(), "/instance-operations/launch", req)
 	if err != nil {
 		return err

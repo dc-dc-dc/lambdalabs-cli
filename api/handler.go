@@ -7,40 +7,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-	"strings"
 )
 
 type APIHandler struct {
-	key string
+	key           string
+	defaultRegion string
 }
 
-func NewAPIHandler(key string) *APIHandler {
-	return &APIHandler{key: key}
+func NewAPIHandler(key, defaultRegion string) *APIHandler {
+	return &APIHandler{
+		key:           key,
+		defaultRegion: defaultRegion,
+	}
 }
 
-func GetAPIKey() string {
-	apiKey := os.Getenv("LAMBDA_API_KEY")
-	if apiKey != "" {
-		return apiKey
-	}
-
-	// try to read from file
-	f, err := os.Open(fmt.Sprintf("%s/.lambda", os.Getenv("HOME")))
-	if err == nil {
-		fmt.Println("reading from file")
-		defer f.Close()
-		raw, err := io.ReadAll(f)
-		if err == nil {
-			lines := strings.Split(string(raw), "\n")
-			for _, line := range lines {
-				if strings.HasPrefix(line, "LAMBDA_API_KEY=") {
-					return strings.TrimPrefix(line, "LAMBDA_API_KEY=")
-				}
-			}
-		}
-	}
-	return ""
+func (api *APIHandler) GetDefaultRegion() string {
+	return api.defaultRegion
 }
 
 func (api *APIHandler) Get(ctx context.Context, url string) (*http.Response, error) {
