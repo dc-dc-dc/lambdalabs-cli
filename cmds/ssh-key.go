@@ -5,6 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/dc-dc-dc/lambda-cli/api"
 )
@@ -49,9 +52,30 @@ func (s *SSHKeyCommand) addSSHKey(args []string) error {
 	fs := flag.NewFlagSet("add-ssh", flag.ContinueOnError)
 	name := fs.String("name", "", "name of the ssh key")
 	publicKey := fs.String("public-key", "", "public key to upload")
+	publicKeyFile := fs.String("public-key-file", "", "public key file to upload")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
+
+	if *publicKeyFile != "" {
+		// Read the file
+		_fileLocation := filepath.Clean(*publicKeyFile)
+		if strings.HasPrefix(_fileLocation, "~") {
+			homedir, _ := os.UserHomeDir()
+			_fileLocation = strings.Replace(_fileLocation, "~", homedir, 1)
+		}
+		f, err := os.Open(_fileLocation)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		raw, err := io.ReadAll(f)
+		if err != nil {
+			return err
+		}
+		*publicKey = string(raw)
+	}
+
 	httpRes, err := s.apiHandler.Post(context.TODO(), "/ssh-keys", api.SSHAddRequest{
 		Name:      *name,
 		PublicKey: *publicKey,
