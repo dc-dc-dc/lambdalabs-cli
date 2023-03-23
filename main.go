@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	version = "0.0.1"
+	Version = "n/a"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 		os.Exit(1)
 	}
 	apiHandler := api.NewAPIHandler(apiKey, defaultRegion)
-	h := cmds.NewHandler(version, apiHandler)
+	h := cmds.NewHandler(Version, apiHandler)
 	if len(os.Args) == 1 {
 		// print help
 		h.PrintHelp("sub", h.GetAvailableCommands())
