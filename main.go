@@ -17,7 +17,8 @@ var (
 func main() {
 	apiKey, defaultRegion := GetDefaults()
 	if apiKey == "" {
-		panic("env LAMBDA_API_KEY not set")
+		fmt.Println("env LAMBDA_API_KEY not set")
+		os.Exit(1)
 	}
 	apiHandler := api.NewAPIHandler(apiKey, defaultRegion)
 	h := cmds.NewHandler(version, apiHandler)
