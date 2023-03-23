@@ -16,22 +16,22 @@ Alternatively you can create a ~/.lambda file and set the variables there
 ## Instance commands
 
 List your running instances
-```
+```bash
 lambdacli instance list
 ```
 
 Create an instance
-```
+```bash
 lambdacli instance create -region=us-west-1 --type=gpu_1x_a10 -ssh-keys=laptop
 ```
 
 ## SSH Keys
 List ssh keys
-```
+```bash
 lambdacli ssh list
 ```
 
 Create an ssh key
-```
+```bash
 lambdacli ssh add --name laptop
 ```
