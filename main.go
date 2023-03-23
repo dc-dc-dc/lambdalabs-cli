@@ -13,7 +13,7 @@ var (
 )
 
 func main() {
-	apiKey := os.Getenv("LAMBDA_API_KEY")
+	apiKey := api.GetAPIKey()
 	if apiKey == "" {
 		panic("env LAMBDA_API_KEY not set")
 	}
