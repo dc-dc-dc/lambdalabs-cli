@@ -6,12 +6,14 @@ Install the binary and include it into path
 
 ### Environment Variables Supported
 
+```env
 LAMBDA_API_KEY=<your private api key>
 DEFAULT_REGION=<default region to use ex: us-west-1>
+```
 
 Alternatively you can create a ~/.lambda file and set the variables there
 
-### Instance commands
+## Instance commands
 
 List your running instances
 ```
@@ -23,7 +25,12 @@ Create an instance
 lambdacli instance create -region=us-west-1 --type=gpu_1x_a10 -ssh-keys=laptop
 ```
 
-### SSH Keys
+## SSH Keys
+List ssh keys
+```
+lambdacli ssh list
+```
+
 Create an ssh key
 ```
 lambdacli ssh add --name laptop
