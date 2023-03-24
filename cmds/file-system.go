@@ -18,16 +18,16 @@ func NewFileSystemCommand(apiHandler *api.APIHandler) CommandHandler {
 	}
 }
 
-func (f *FileSystemCommand) HandleCommand(cmd string, args []string) error {
+func (f *FileSystemCommand) HandleCommand(ctx context.Context, cmd string, args []string) error {
 	switch cmd {
 	case "list":
-		return f.listFileSystems(args)
+		return f.listFileSystems(ctx, args)
 	}
 	return fmt.Errorf("unknown cmd %s", cmd)
 }
 
-func (f *FileSystemCommand) listFileSystems(args []string) error {
-	httpRes, err := f.apiHandler.Get(context.TODO(), "/file-systems")
+func (f *FileSystemCommand) listFileSystems(ctx context.Context, args []string) error {
+	httpRes, err := f.apiHandler.Get(ctx, "/file-systems")
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -31,8 +32,8 @@ func main() {
 	_cmd := os.Args[1]
 
 	_args := os.Args[2:]
-
-	if err := h.HandleCommand(_cmd, _args); err != nil {
+	ctx := context.Background()
+	if err := h.HandleCommand(ctx, _cmd, _args); err != nil {
 		fmt.Println("something went wrong :F")
 		fmt.Printf("error trying to execute the command %s with args %v, err - %s", _cmd, _args, err.Error())
 		os.Exit(1)

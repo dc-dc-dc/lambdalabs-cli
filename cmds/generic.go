@@ -1,13 +1,14 @@
 package cmds
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/dc-dc-dc/lambda-cli/api"
 )
 
 type CommandHandler interface {
-	HandleCommand(cmd string, args []string) error
+	HandleCommand(ctx context.Context, cmd string, args []string) error
 	GetAvailableCommands() []string
 }
 
@@ -32,7 +33,7 @@ func NewHandler(version string, apiHandler *api.APIHandler) *Handler {
 	}
 }
 
-func (h *Handler) HandleCommand(cmd string, args []string) error {
+func (h *Handler) HandleCommand(ctx context.Context, cmd string, args []string) error {
 	if alias, ok := h.AliasMap[cmd]; ok {
 		cmd = alias
 	}
@@ -54,7 +55,7 @@ func (h *Handler) HandleCommand(cmd string, args []string) error {
 			return nil // or error?
 		}
 
-		err := handler.HandleCommand(_cmd, _args)
+		err := handler.HandleCommand(ctx, _cmd, _args)
 		if t, ok := err.(*api.APIError); ok {
 			// if the conversion is fine print the json directly
 			if raw, err := t.Raw(); err == nil {

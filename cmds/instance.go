@@ -21,27 +21,27 @@ func NewInstanceCommand(apiHandler *api.APIHandler) CommandHandler {
 	}
 }
 
-func (t *InstanceCommand) HandleCommand(cmd string, args []string) error {
+func (t *InstanceCommand) HandleCommand(ctx context.Context, cmd string, args []string) error {
 	if os.Getenv("DEBUG") == "1" {
 		fmt.Printf("got cmd %s, args - %v\n", cmd, args)
 	}
 	switch cmd {
 	case "types":
-		return t.handleInstanceTypeListCommand(args)
+		return t.handleInstanceTypeListCommand(ctx, args)
 	case "create":
-		return t.handleInstanceCreateCommand(args)
+		return t.handleInstanceCreateCommand(ctx, args)
 	case "delete":
-		return t.handleInstanceDeleteCommand(args)
+		return t.handleInstanceDeleteCommand(ctx, args)
 	case "list":
-		return t.handleInstanceListCommand(args)
+		return t.handleInstanceListCommand(ctx, args)
 	case "get":
-		return t.handleInstanceGetCommand(args)
+		return t.handleInstanceGetCommand(ctx, args)
 	}
 	return fmt.Errorf("unknown cmd %s", cmd)
 }
 
-func (t *InstanceCommand) handleInstanceTypeListCommand(args []string) error {
-	httpRes, err := t.apiHandler.Get(context.TODO(), "/instance-types")
+func (t *InstanceCommand) handleInstanceTypeListCommand(ctx context.Context, args []string) error {
+	httpRes, err := t.apiHandler.Get(ctx, "/instance-types")
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (t *InstanceCommand) handleInstanceTypeListCommand(args []string) error {
 	return nil
 }
 
-func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
+func (t *InstanceCommand) handleInstanceCreateCommand(ctx context.Context, args []string) error {
 	// region, instance_type_name, ssh_key_names - required
 	// quantity, name, file_system_names
 	fs := flag.NewFlagSet("create", flag.ContinueOnError)
@@ -84,7 +84,7 @@ func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
 		req.RegionName = t.apiHandler.GetDefaultRegion()
 	}
 
-	httpRes, err := t.apiHandler.Post(context.TODO(), "/instance-operations/launch", req)
+	httpRes, err := t.apiHandler.Post(ctx, "/instance-operations/launch", req)
 	if err != nil {
 		return err
 	}
@@ -97,9 +97,9 @@ func (t *InstanceCommand) handleInstanceCreateCommand(args []string) error {
 	return nil
 }
 
-func (t *InstanceCommand) handleInstanceDeleteCommand(args []string) error {
+func (t *InstanceCommand) handleInstanceDeleteCommand(ctx context.Context, args []string) error {
 	// TODO: validate the ids
-	httpRes, err := t.apiHandler.Post(context.TODO(), "/instance-operations/terminate", api.InstanceDeleteApiRequest{InstanceIds: args})
+	httpRes, err := t.apiHandler.Post(ctx, "/instance-operations/terminate", api.InstanceDeleteApiRequest{InstanceIds: args})
 	if err != nil {
 		return err
 	}
@@ -112,12 +112,12 @@ func (t *InstanceCommand) handleInstanceDeleteCommand(args []string) error {
 	return nil
 }
 
-func (t *InstanceCommand) handleInstanceGetCommand(args []string) error {
+func (t *InstanceCommand) handleInstanceGetCommand(ctx context.Context, args []string) error {
 	if len(args) != 1 {
 		return fmt.Errorf("instance get expected id")
 	}
 	id := args[0]
-	httpRes, err := t.apiHandler.Get(context.TODO(), fmt.Sprintf("/instances/%s", id))
+	httpRes, err := t.apiHandler.Get(ctx, fmt.Sprintf("/instances/%s", id))
 	if err != nil {
 		return err
 	}
@@ -130,8 +130,8 @@ func (t *InstanceCommand) handleInstanceGetCommand(args []string) error {
 	return nil
 }
 
-func (t *InstanceCommand) handleInstanceListCommand(args []string) error {
-	httpRes, err := t.apiHandler.Get(context.TODO(), "/instances")
+func (t *InstanceCommand) handleInstanceListCommand(ctx context.Context, args []string) error {
+	httpRes, err := t.apiHandler.Get(ctx, "/instances")
 	if err != nil {
 		return err
 	}
