@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/dc-dc-dc/lambda-cli/api"
+	"github.com/dc-dc-dc/lambdalabs-cli/api"
 )
 
 type SSHKeyCommand struct {

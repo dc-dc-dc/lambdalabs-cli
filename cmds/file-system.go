@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/dc-dc-dc/lambda-cli/api"
+	"github.com/dc-dc-dc/lambdalabs-cli/api"
 )
 
 type FileSystemCommand struct {

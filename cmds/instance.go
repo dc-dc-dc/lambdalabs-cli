@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dc-dc-dc/lambda-cli/api"
+	"github.com/dc-dc-dc/lambdalabs-cli/api"
 )
 
 type InstanceCommand struct {
