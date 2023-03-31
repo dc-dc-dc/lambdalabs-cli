@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dc-dc-dc/lambda-cli/api"
-	"github.com/dc-dc-dc/lambda-cli/cmds"
+	"github.com/dc-dc-dc/lambdalabs-cli/api"
+	"github.com/dc-dc-dc/lambdalabs-cli/cmds"
 )
 
 var (
